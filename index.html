@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro credenciamento facial LANUP > GSH</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #ffffff; color: #111; }
+    form { max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #f9f9f9; }
+    video, canvas, img.preview { width: 100%; max-width: 480px; margin-top: 10px; border-radius: 4px; }
+    button { margin-top: 10px; padding: 10px; width: 100%; background-color: #007bc1; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background-color: #005f94; }
+    label { display: block; margin-top: 15px; }
+    img.logo { display: block; max-width: 200px; margin: 0 auto 20px; }
+    .foto-info { font-size: 14px; background-color: #e6f2fa; border-left: 4px solid #007bc1; padding: 10px; margin-top: 20px; }
+    .botoes-foto button { width: 48%; display: inline-block; }
+  </style>
+</head>
+<body>
+  <img src="logolanup.jpeg" alt="Logo Lanup" class="logo">
+  <h2 style="text-align:center; color:#003d66">Cadastro credenciamento facial LANUP > GSH</h2>
+  <form id="formulario" onsubmit="enviarFormulario(event)">
+    <label>NOME COMPLETO DO PROFISSIONAL (EM CAPSLOCK, SEM ACENTOS):<br>
+      <input type="text" name="nome" style="text-transform:uppercase;" pattern="[A-Z ]+" required>
+    </label>
+    <label>CPF (SEM PONTOS OU TRAÇOS):<br>
+      <input type="text" name="cpf" pattern="\d{11}" maxlength="11" required>
+    </label>
+    <label>SELECIONE A EMPRESA:<br>
+      <select name="empresa" required>
+        <option value="">Selecione uma empresa</option>
+        <option value="DUHA">DUHA</option>
+        <option value="CASA DO INGRESSO">CASA DO INGRESSO</option>
+        <option value="EVENTOS SP">EVENTOS SP</option>
+        <option value="GSH">GSH</option>
+      </select>
+    </label>
+    <div class="foto-info">
+      <strong>Padrão para Inclusão de Foto no Cadastro Facial:</strong><br><br>
+      📸 <strong>FOTO ACEITA:</strong><br>
+      • Rosto totalmente visível e centralizado.<br>
+      • Sem adornos/acessórios (bonés, óculos, máscaras, etc).<br>
+      • Expressão facial neutra.<br>
+      • Fundo claro e uniforme.<br>
+      • Boa iluminação.<br><br>
+      ✅ Essas diretrizes garantem o funcionamento correto da tecnologia de reconhecimento facial.
+    </div>
+    <img src="unnamed.jpg" alt="Exemplo de Foto Correta" class="preview">
+    <video id="video" autoplay playsinline></video>
+    <div class="botoes-foto">
+      <button type="button" onclick="tirarFoto()">Tirar Foto</button>
+      <button type="button" onclick="refazerFoto()">Refazer Foto</button>
+    </div>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <input type="hidden" name="foto" id="foto" required>
+    <div id="fotoPreviewContainer" style="display:none; margin-top:10px;">
+      <label>Prévia da Foto Capturada:</label>
+      <img id="fotoPreview" class="preview" alt="Prévia da Foto">
+    </div>
+    <button type="submit">Enviar</button>
+  </form>
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const fotoInput = document.getElementById('foto');
+    const fotoPreview = document.getElementById('fotoPreview');
+    const fotoPreviewContainer = document.getElementById('fotoPreviewContainer');
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => { video.srcObject = stream; })
+      .catch(err => { alert('Erro ao acessar a câmera: ' + err); });
+    function tirarFoto() {
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataURL = canvas.toDataURL('image/png');
+      fotoInput.value = dataURL;
+      fotoPreview.src = dataURL;
+      fotoPreviewContainer.style.display = 'block';
+      alert('Foto capturada com sucesso! Confira a prévia abaixo.');
+    }
+    function refazerFoto() {
+      fotoInput.value = '';
+      fotoPreview.src = '';
+      fotoPreviewContainer.style.display = 'none';
+      alert('Foto descartada. Tire novamente.');
+    }
+    function enviarFormulario(e) {
+      e.preventDefault();
+      const form = document.getElementById('formulario');
+      if (!fotoInput.value) {
+        alert('Por favor, tire a foto antes de enviar.');
+        return;
+      }
+      const dados = new FormData(form);
+      const jsonData = Object.fromEntries(dados);
+      fetch('https://script.google.com/macros/s/AKfycbwqiGC-0khdCIqIgG2nrhbIrwnZV9ZJUNcscEpb8RzDyUBlkXk73bCRfhSXNY6yzo5H-w/exec', {
+        method: 'POST',
+        body: JSON.stringify(jsonData),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(res => {
+        if (res.ok) alert('Formulário enviado com sucesso!');
+        else throw new Error('Erro ao enviar.');
+      })
+      .catch(err => {
+        alert('Erro ao enviar: ' + err.message);
+      });
+    }
+  </script>
+</body>
+</html>
