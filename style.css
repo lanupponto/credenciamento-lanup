@@ -1,0 +1,59 @@
+
+body {
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 20px;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    width: 100%;
+    max-width: 450px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+.logo {
+    display: block;
+    max-width: 100%;
+    margin: 0 auto 20px;
+}
+h2 {
+    text-align: center;
+    color: #003366;
+}
+label {
+    display: block;
+    margin-top: 10px;
+}
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    margin-top: 5px;
+    outline: none;
+    font-size: 18px;
+}
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    background-color: #0077cc;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+video, img {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+}
+.botoes {
+    text-align: center;
+    margin-top: 10px;
+}
