@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Credenciamento Facial LANUP</title>
+    <link rel="stylesheet" href="style.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <form id="formulario" onsubmit="mostrarMensagemSucesso(event)">
+            <!-- ETAPA 1 -->
+            <div id="etapa1">
+                <img src="layout-lanup-resized.jpg" alt="Layout Lanup" class="logo"/>
+                <h2><strong>Cadastro facial LANUP</strong></h2>
+                <label><strong>Nome completo do profissional:</strong></label>
+                <input type="text" name="nome" required/>
+
+                <label><strong>CPF:</strong></label>
+                <input type="text" name="cpf" id="cpfInput" required/>
+
+                <label><strong>Empresa:</strong></label>
+                <select name="empresa" required>
+                    <option value="">Selecione a empresa</option>
+                    <option value="DUHA">DUHA</option>
+                    <option value="CASA DO INGRESSO">CASA DO INGRESSO</option>
+                    <option value="EVENTOS SP">EVENTOS SP</option>
+                    <option value="GSH">GSH</option>
+                </select>
+
+                <button type="button" onclick="mostrarEtapa2()">Prosseguir</button>
+            </div>
+
+            <!-- ETAPA 2 -->
+            <div id="etapa2" style="display:none;">
+                <h2>Tire sua foto</h2>
+                <video id="video" autoplay></video>
+                <canvas id="canvas" style="display:none;"></canvas>
+                <img id="preview" style="display:none;"/>
+                <div class="botoes">
+                    <button type="button" id="capturarBtn" onclick="tirarFoto()">Capturar</button>
+                    <button type="button" id="refazerBtn" style="display:none;" onclick="refazerFoto()">Refazer foto</button>
+                    <button type="submit" id="enviarBtn" style="display:none;">Enviar</button>
+                </div>
+            </div>
+
+            <!-- Mensagem final -->
+            <div id="mensagemFinal" style="display:none;">
+                <h2><strong>Foto enviada com sucesso!</strong></h2>
+                <p><strong>Obrigado.</strong><br>Qualquer dúvida, contatar o suporte:<br><strong>(11) 98890-1593</strong></p>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const etapa1 = document.getElementById("etapa1");
+        const etapa2 = document.getElementById("etapa2");
+        const mensagemFinal = document.getElementById("mensagemFinal");
+        const video = document.getElementById("video");
+        const canvas = document.getElementById("canvas");
+        const preview = document.getElementById("preview");
+        const capturarBtn = document.getElementById("capturarBtn");
+        const refazerBtn = document.getElementById("refazerBtn");
+        const enviarBtn = document.getElementById("enviarBtn");
+        const cpfInput = document.getElementById("cpfInput");
+
+        
+        function mostrarEtapa2() {
+            const nome = document.querySelector('input[name="nome"]').value.trim();
+            const cpf = document.querySelector('input[name="cpf"]').value.trim();
+            const empresa = document.querySelector('select[name="empresa"]').value;
+
+            if (!nome || !cpf || !empresa) {
+                alert("É necessário preencher todos os campos para prosseguir.");
+                return;
+            }
+
+            etapa1.style.display = "none";
+            etapa2.style.display = "block";
+
+            navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+                video.srcObject = stream;
+            });
+        }
+    
+            etapa1.style.display = "none";
+            etapa2.style.display = "block";
+            navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+                video.srcObject = stream;
+            });
+        }
+
+        function tirarFoto() {
+            const context = canvas.getContext("2d");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataURL = canvas.toDataURL("image/jpeg");
+            preview.src = dataURL;
+            preview.style.display = "block";
+            canvas.style.display = "none";
+            video.style.display = "none";
+            capturarBtn.style.display = "none";
+            refazerBtn.style.display = "inline-block";
+            enviarBtn.style.display = "inline-block";
+        }
+
+        function refazerFoto() {
+            preview.style.display = "none";
+            video.style.display = "block";
+            capturarBtn.style.display = "inline-block";
+            refazerBtn.style.display = "none";
+            enviarBtn.style.display = "none";
+        }
+
+        function mostrarMensagemSucesso(event) {
+            event.preventDefault();  // Impede o envio real
+            etapa2.style.display = "none";
+            mensagemFinal.style.display = "block";
+        }
+
+        // Remove caracteres inválidos do CPF enquanto digita
+        cpfInput.addEventListener("input", () => {
+            cpfInput.value = cpfInput.value.replace(/[^0-9]/g, "");
+        });
+    </script>
+</body>
+</html>
